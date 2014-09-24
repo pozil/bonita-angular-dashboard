@@ -1,6 +1,6 @@
 bonita-angular-dashboard
 ========================
-Bonita BPM Dashboard built on AngularJS and integrated as a custom page in the Bonita Portal.
+*Bonita BPM Dashboard built on AngularJS and integrated as a custom page in the Bonita Portal.*
 Based on Fabio Lombardi's (Bonitasoft) original work
 Edited by Philippe Ozil (Bonitasoft)
 
