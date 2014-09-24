@@ -1,0 +1,51 @@
+<!doctype html>
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>
+<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>
+<html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <title>AngularJS Dashboard</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="pageResource?page=custompage_angulardashboard&location=style/animate.css" />
+    <link rel="stylesheet" href="pageResource?page=custompage_angulardashboard&location=style/bootstrap.min.css">
+	<link rel="stylesheet" href="pageResource?page=custompage_angulardashboard&location=style/main.css">
+</head>
+<body ng-app="dashboard">
+
+<div class="container" ng-controller="dashboardController">
+
+	<div class="col-lg-6">
+		<user-stats></user-stats>
+		<user-apps></user-apps>
+	</div>
+	<div class="col-lg-6">
+		<user-available-tasks></user-available-tasks>
+		<user-open-cases></user-open-cases>
+	</div>
+
+</div>
+
+
+
+<!-- Third party dependencies -->
+<script src="pageResource?page=custompage_angulardashboard&location=3rd-party/jquery.min.js"></script>
+<script src="pageResource?page=custompage_angulardashboard&location=3rd-party/angular.min.js"></script>
+<script src="pageResource?page=custompage_angulardashboard&location=3rd-party/angular-resource.min.js"></script>
+<script src="pageResource?page=custompage_angulardashboard&location=3rd-party/angular-cookies.min.js"></script>
+<script src="pageResource?page=custompage_angulardashboard&location=3rd-party/angular-ui-router.min.js"></script>
+<script src="pageResource?page=custompage_angulardashboard&location=3rd-party/bootstrap/js/bootstrap.min.js"></script>
+<script src="pageResource?page=custompage_angulardashboard&location=3rd-party/angular-bootstrap-tpls.min.js"></script>
+<script src="pageResource?page=custompage_angulardashboard&location=3rd-party/ng-grid.min.js"></script>
+
+<!-- Application dependencies -->
+<script src="pageResource?page=custompage_angulardashboard&location=ngBonita.js"></script>
+<script src="pageResource?page=custompage_angulardashboard&location=dashboard.js"></script>
+
+</body>
+</html>

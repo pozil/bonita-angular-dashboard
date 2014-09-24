@@ -1,0 +1,27 @@
+<div class="bs-component" ng-mouseenter="hover('tasks')" ng-mouseleave="hover('tasks')">
+	<legend class="text-primary"><span class="glyphicon glyphicon-tasks"></span> Available Tasks </legend>
+	<div class="panel panel-primary">
+		<div class="panel-body">
+			<div id='source-button' class='btn btn-success btn-xs' ng-show="showRest['tasks']" ng-click="openRestModal('taskListModalContent.html')">{ REST }</div>
+			<table class="table table-striped table-hover table-condensed">
+				<thead>
+				<tr>
+					<th>Task Name</th>
+					<th>App name</th>
+					<th>Due date</th>
+					<th>Do it</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr ng-repeat="task in tasks" >
+					<td>{{task.displayName}}</td>
+					<td>{{task.rootContainerId.displayName}}</td>
+					<td>{{getDate(task.dueDate)}}</td>
+					<td><a class="btn btn-primary btn-xs" ng-click="openStartModal(task.id, task.rootContainerId.displayName, task.rootContainerId.version, 'doTask', task.displayName)"><span class="glyphicon glyphicon-edit"></span></a></td>
+				</tr>
+				</tbody>
+			</table>
+			<p><a class="btn btn-danger btn-sm" class="btn btn-danger btn-sm" href="/bonita/portal/homepage?tenant=1#?_p=tasklistinguser&_pf=1&_f=available" target="_top"> <span class="glyphicon glyphicon-new-window"></span> Tasks page</a></p>
+		</div>
+	</div>
+</div>

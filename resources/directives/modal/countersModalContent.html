@@ -1,0 +1,43 @@
+<div modal="showModal">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="ok()">&times;</button>
+        <h4 translate>REST API calls for Counters</h4>
+    </div>
+    <div class="modal-body">
+        <label>Method: GET</label><br/>
+        <label>URLs: </label>
+        <div class="panel panel-primary">
+            <div class="panel-body">
+                Example for Available tasks counter
+                <pre>API/bpm/humanTask?p=0&c=5&f=user_id%3D1&f=state%3Dready</pre>
+                more counters using
+                <pre>
+bpm/archivedHumanTask
+bpm/case
+bpm/archivedCase
+bpm/process</pre>
+            </div>
+        </div>
+        <label>Parse the HTTP Response: </label>
+        <div class="panel panel-primary">
+            <div class="panel-body">
+                <pre>content-range: 0-5/2</pre>
+                0 = provides the page 0 (1st page)
+                <br> 5 = max 5 results per page
+                <br> 2 = represents the total number of results
+                <br><br> In this example the counter value is 2
+            </div>
+        </div>
+        <label>AngularJS call using ngBonita HumanTask resource: </label>
+        <pre>
+HumanTask.getFromCurrentUser({
+	p:0,
+	c:5,
+	d:'rootContainerId'
+}).$promise.then(function(tasks) {
+	$scope.tasks = tasks.items;
+	$scope.totalTasksToDo = tasks.totalCount;
+});</pre>
+        the counter is stored in $scope.totalTasksToDo
+    </div>
+</div>

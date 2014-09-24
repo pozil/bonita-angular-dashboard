@@ -1,0 +1,29 @@
+<div modal="showModal">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="ok()">&times;</button>
+        <h4 translate>REST API call for Available Applications List</h4>
+    </div>
+    <div class="modal-body">
+        <label>Method: GET</label><br/>
+        <label>URL: </label>
+                <pre>API/bpm/process?c=5&p=0&d=deployedBy&f=user_id%3D1</pre>
+        <label>AngularJS call using ngBonita ProcessDefinition resource: </label>
+        <pre>
+ProcessDefinition.getStartableByCurrentUser({
+	p:0,
+	c:5,
+	d:'deployedBy'
+}).$promise.then(function(apps) {
+	$scope.apps = apps.items;
+	$scope.totalAppsAvailable = apps.totalCount;
+});
+        </pre>
+        <label>More than REST, how to start a process: </label>
+        <div class="panel panel-primary">
+            <div class="panel-body">
+                Call the following URL according to the process name, version and id:
+                <pre>portal/homepage?ui=form&locale=en&tenant=1#form=IT Help Desk--3.0$entry&process=5826139717723008213&autoInstantiate=false&mode=form&userId=1</pre>
+            </div>
+        </div>
+    </div>
+</div>

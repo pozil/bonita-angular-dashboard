@@ -1,0 +1,27 @@
+<div class="bs-component" ng-mouseenter="hover('apps')" ng-mouseleave="hover('apps')">
+	<legend class="text-primary"><span class="glyphicon glyphicon-th"></span> Apps</legend>
+	<div class="panel panel-primary">
+		<div class="panel-body">
+			<div id='source-button' class='btn btn-success btn-xs' ng-show="showRest['apps']" ng-click="openRestModal('appListModalContent.html')">{ REST }</div>
+			<table class="table table-striped table-hover table-condensed">
+				<thead>
+				<tr>
+					<th>App Name</th>
+					<th>Version</th>
+					<th>Deployed by</th>
+					<th>Start it</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr ng-repeat="app in apps" >
+					<td>{{app.displayName}}</td>
+					<td>{{app.version}}</td>
+					<td>{{app.deployedBy.firstname}} {{app.deployedBy.lastname}}</td>
+					<td><a class="btn btn-primary btn-xs" ng-click="openStartModal(app.id, app.displayName, app.version, 'startApp', '')"><span class="glyphicon glyphicon-play"></span></a></td>
+				</tr>
+				</tbody>
+			</table>
+			<p><a class="btn btn-danger btn-sm" href="/bonita/portal/homepage?tenant=1#?_p=processlistinguser&_pf=1&_f=all" target="_top"> <span class="glyphicon glyphicon-new-window"></span> Apps page</a></p>
+		</div>
+	</div>
+</div>

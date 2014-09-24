@@ -1,0 +1,22 @@
+<div modal="showModal">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="ok()">&times;</button>
+        <h4 translate>REST API call for Available Task List</h4>
+    </div>
+    <div class="modal-body">
+        <label>Method: GET</label><br/>
+        <label>URL: </label>
+                <pre>API/bpm/humanTask?p=0&c=5&d=rootContainerId&f=user_id%3D1&f=state%3Dready</pre>
+        <label>AngularJS call using ngBonita HumanTask resource: </label>
+        <pre>
+HumanTask.getFromCurrentUser({
+	p:0,
+	c:5,
+	d:'rootContainerId'
+}).$promise.then(function(tasks) {
+	$scope.tasks = tasks.items;
+	$scope.totalTasksToDo = tasks.totalCount;
+});
+        </pre>
+    </div>
+</div>

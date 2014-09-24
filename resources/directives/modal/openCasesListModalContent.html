@@ -1,0 +1,22 @@
+<div modal="showModal">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="ok()">&times;</button>
+        <h4 translate>REST API call for Open Cases List</h4>
+    </div>
+    <div class="modal-body">
+        <label>Method: GET</label><br/>
+        <label>URL: </label>
+                <pre>API/bpm/case?c=5&p=0&d=processDefinitionId&f=started_by%3D1</pre>
+        <label>AngularJS call using ngBonita ProcessInstance resource: </label>
+        <pre>
+ProcessInstance.getStartedByCurrentUser({
+	p:0,
+	c:5,
+	d:'processDefinitionId'
+}).$promise.then(function(cases) {
+	$scope.cases = cases.items;
+	$scope.totalCasesOpen = cases.totalCount;
+});
+        </pre>
+    </div>
+</div>
