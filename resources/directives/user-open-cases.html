@@ -1,27 +1,34 @@
-<div class="bs-component" ng-mouseenter="hover('cases')" ng-mouseleave="hover('cases')">
+<div class="bs-component" ng-mouseenter="hover('cases')" ng-mouseleave="hover('cases')" ng-controller="CaseListController as listCtrl">
 	<legend class="text-primary"><span class="glyphicon glyphicon-folder-open"></span> &nbsp;&nbsp;Open Cases</legend>
 	<div class="panel panel-primary">
 		<div class="panel-body">
-			<div id='source-button' class='btn btn-success btn-xs' ng-show="showRest['cases']" ng-click="openRestModal('openCasesListModalContent.html')">{ REST }</div>
-			<table class="table table-striped table-hover table-condensed">
-				<thead>
-				<tr>
-					<th>Case Id</th>
-					<th>App name</th>
-					<th>App version</th>
-					<th>Started on</th>
-				</tr>
-				</thead>
-				<tbody>
-				<tr ng-repeat="case in cases" >
-					<td>{{case.id}}</td>
-					<td>{{case.processDefinitionId.displayName}}</td>
-					<td>{{case.processDefinitionId.version}}</td>
-					<td>{{getDate(case.start)}}</td>
-				</tr>
-				</tbody>
-			</table>
-			<p><a class="btn btn-danger btn-sm" href="/bonita/portal/homepage?tenant=1#?_p=caselistinguser&_pf=1&_f=mycases" target="_top"> <span class="glyphicon glyphicon-new-window"></span> Cases page</a></p>
+			<a class="btn btn-primary btn-xs panel-top-right-button" ng-click="listCtrl.refresh()" title="Refresh"><span class="glyphicon glyphicon-refresh"></span></a>
+			<div id='source-button' class='btn btn-success btn-xs' ng-show="showRest['cases']" ng-click="openRestModal('openCasesListModalContent.html')" title="Show REST operations">{ REST }</div>
+			
+			<div ng-show="listCtrl.list.totalCount > 0">
+				<table class="table table-striped table-hover table-condensed">
+					<thead>
+					<tr>
+						<th>Case Id</th>
+						<th>App name</th>
+						<th>App version</th>
+						<th>Started on</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr ng-repeat="case in listCtrl.getItems()">
+						<td>{{case.id}}</td>
+						<td>{{case.processDefinitionId.displayName}}</td>
+						<td>{{case.processDefinitionId.version}}</td>
+						<td>{{getDate(case.start)}}</td>
+					</tr>
+					</tbody>
+				</table>
+				<pagination-container></pagination-container>
+			</div>
+			<h4 ng-hide="listCtrl.list.totalCount > 0" style="text-align:center;">No available cases for the moment.</h4>
+			
+			<p class="portal_link_container"><a class="btn btn-danger btn-sm" href="/bonita/portal/homepage?tenant=1#?_p=caselistinguser&_pf=1&_f=mycases" target="_top"> <span class="glyphicon glyphicon-new-window"></span> Cases page</a></p>
 		</div>
 	</div>
 </div>

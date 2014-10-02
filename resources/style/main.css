@@ -4,9 +4,22 @@ body>div.container {margin-top:10px;}
     position: relative;
 }
 
+.bs-component p.portal_link_container	{margin-bottom:0;}
+
 #source-button {
     position: absolute;
     top:0;
     right:0;
     z-index:9;
 }
+
+.panel-top-right-button {
+	margin: -16px -16px 0 0;
+	float: right;
+}
+
+pagination-container>div	{margin:10px 0; clear:both; height:23px;}
+pagination-container span:first-child	{float:left;}
+pagination-container span:last-child	{float:right;}
+pagination-container span.glyphicon		{height:18px;}
+pagination-container button	{font-weight:bold;}

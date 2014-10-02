@@ -1,0 +1,11 @@
+<div>
+	<span>{{listCtrl.getCountLabel()}}</span>
+	<span>
+		<button class="btn btn-primary btn-xs" ng-click="listCtrl.showPreviousPage()" ng-disabled="!listCtrl.hasPreviousPage()" title="Previous page">
+			<span class="glyphicon glyphicon-arrow-left"></span>
+		</button> 
+		<button class="btn btn-primary btn-xs" ng-click="listCtrl.showNextPage()" ng-disabled="!listCtrl.hasNextPage()" title="Next page">
+			<span class="glyphicon glyphicon-arrow-right"></span>
+		</button>
+	</span>
+</div>

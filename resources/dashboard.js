@@ -1,36 +1,19 @@
 'use strict';
 /**
- * Copyright (C) 2014 BonitaSoft S.A.
- * BonitaSoft, 32 rue Gustave Eiffel - 38000 Grenoble
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Based on Fabio Lombardi's original work
+ * Edited by Philippe Ozil
  */
- 
-/**
- * Based on Fabio Lombardi's (Bonitasoft) original work
- * Edited by Philippe Ozil (Bonitasoft)
- */
- 
+
 (function() {
 
-var appModule = angular.module('dashboard', ['ngCookies', 'ui.bootstrap', 'ngBonita']);
+var appModule = angular.module('dashboardModule', ['ui.bootstrap', 'ngBonita']);
 
 // Constant used to specify resource base path (facilitates integration into a Bonita custom page)
 appModule.constant('RESOURCE_PATH', 'pageResource?page=custompage_angulardashboard&location=');
 
-appModule.controller('dashboardController', 
-	['$scope', '$cookies', '$modal', 'RESOURCE_PATH', 'BonitaSession', 'User', 'HumanTask', 'ArchivedHumanTask', 'ProcessDefinition', 'ProcessInstance', 'ArchivedProcessInstance', 
-	function ($scope, $cookies, $modal, RESOURCE_PATH, BonitaSession, User, HumanTask, ArchivedHumanTask, ProcessDefinition, ProcessInstance, ArchivedProcessInstance) {
+appModule.controller('DashboardController', 
+	['$scope', '$modal', 'RESOURCE_PATH', 'bonitaConfig', 'BonitaSession', 'User', 'HumanTask', 'ArchivedHumanTask', 'ProcessDefinition', 'ProcessInstance', 'ArchivedProcessInstance', 
+	function ($scope, $modal, RESOURCE_PATH, bonitaConfig, BonitaSession, User, HumanTask, ArchivedHumanTask, ProcessDefinition, ProcessInstance, ArchivedProcessInstance) {
 	
 		// Prepare scope
         $scope.showRest = [];
@@ -45,23 +28,20 @@ appModule.controller('dashboardController',
 
 		// Load data using ngBonita resources
         BonitaSession.getCurrent().$promise.then(function(session){
-            $cookies.bonitaUserId	= session.user_id;
+			// Retrieve session info
+			bonitaConfig.setUsername(session.user_name);
+			bonitaConfig.setUserId(session.user_id);
 			$scope.loggedUser = session.user_id;
-            // Load user data
+            
+			// Broadcast refresh signal to all dashboard panes
+			$scope.$broadcast('refresh_list');
+			
+			// Load user data
 			User.get({
                 id:session.user_id
             }).$promise.then(function(user) {
                 $scope.firstname = user.firstname;
                 $scope.lastname = user.lastname;
-            });
-			// Load open tasks
-            HumanTask.getFromCurrentUser({
-                p:0,
-                c:5,
-				d:'rootContainerId'
-            }).$promise.then(function(tasks) {
-                $scope.tasks = tasks.items;
-                $scope.totalTasksToDo = tasks.totalCount;
             });
 			// Load archived tasks
             ArchivedHumanTask.getCompletedByCurrentUser({
@@ -71,24 +51,6 @@ appModule.controller('dashboardController',
             }).$promise.then(function(archivedTasks) {
                     $scope.archivedTasks = archivedTasks.items;
                     $scope.totalArchivedTasks = archivedTasks.totalCount;
-            });
-			// Load apps
-            ProcessDefinition.getStartableByCurrentUser({
-                p:0,
-                c:5,
-                d:'deployedBy'
-            }).$promise.then(function(apps) {
-                $scope.apps = apps.items;
-                $scope.totalAppsAvailable = apps.totalCount;
-            });
-			// Load cases
-            ProcessInstance.getStartedByCurrentUser({
-                p:0,
-                c:5,
-                d:'processDefinitionId'
-            }).$promise.then(function(cases) {
-                    $scope.cases = cases.items;
-                    $scope.totalCasesOpen = cases.totalCount;
             });
 			// Load archived cases
             ArchivedProcessInstance.getStartedByCurrentUser({
@@ -151,7 +113,146 @@ appModule.controller('dashboardController',
     }]);
 
 /*
-* DIRECTIVES
+* PAGINATED LIST CONTROLLERS
+*/
+
+// User available tasks list controller
+appModule.controller('TaskListController', 
+	['$scope', '$modal', 'HumanTask', 
+	function ($scope, $modal, HumanTask) {
+	
+	this.list = {items : [], pageIndex : 0, pageSize : 5, totalCount : 0};
+	var controller = this;
+	
+	this.refresh = function() {
+		controller.list.items = [];
+		HumanTask.getFromCurrentUser({p : controller.list.pageIndex, c : controller.list.pageSize, d : 'rootContainerId'}).$promise.then(function (taskList) {
+			// Update this list
+			controller.list = taskList;
+			// Update parent for stats
+			$scope.$parent.totalTasksToDo = taskList.totalCount;
+		});
+	};
+	
+	// Global refresh signal listener - Used to init data
+	$scope.$on('refresh_list', function(event) {
+		controller.refresh();
+	});
+	
+	// Common methods
+	this.getCountLabel = function()		{	return getCountLabel(controller);	};
+	this.hasPreviousPage = function()	{	return hasPreviousPage(controller);	}
+	this.hasNextPage = function()		{	return hasNextPage(controller);	}
+	this.showPreviousPage = function()	{	showPreviousPage(controller);	}
+	this.showNextPage = function()		{	showNextPage(controller);	}
+	this.getItems = function()			{	return getItems(controller);	};
+}]);
+
+// User app list controller
+appModule.controller('AppListController', 
+	['$scope', '$modal', 'ProcessDefinition', 
+	function ($scope, $modal, ProcessDefinition) {
+	
+	this.list = {items : [], pageIndex : 0, pageSize : 5, totalCount : 0};
+	var controller = this;
+	
+	this.refresh = function() {
+		controller.list.items = [];
+		ProcessDefinition.getStartableByCurrentUser({p : controller.list.pageIndex, c : controller.list.pageSize, d : 'deployedBy'}).$promise.then(function(appList) {
+			// Update this list
+			controller.list = appList;
+			// Update parent for stats
+			$scope.$parent.totalAppsAvailable = appList.totalCount;
+		});
+	};
+	
+	// Global refresh signal listener - Used to init data
+	$scope.$on('refresh_list', function(event) {
+		controller.refresh();
+	});
+	
+	// Common methods
+	this.getCountLabel = function()		{	return getCountLabel(controller);	};
+	this.hasPreviousPage = function()	{	return hasPreviousPage(controller);	}
+	this.hasNextPage = function()		{	return hasNextPage(controller);	}
+	this.showPreviousPage = function()	{	showPreviousPage(controller);	}
+	this.showNextPage = function()		{	showNextPage(controller);	}
+	this.getItems = function()			{	return getItems(controller);	};
+}]);
+
+// User case list controller
+appModule.controller('CaseListController', 
+	['$scope', '$modal', 'ProcessInstance', 
+	function ($scope, $modal, ProcessInstance) {
+	
+	this.list = {items : [], pageIndex : 0, pageSize : 5, totalCount : 0};
+	var controller = this;
+	
+	this.refresh = function() {
+		controller.list.items = [];
+		ProcessInstance.getStartedByCurrentUser({p : controller.list.pageIndex, c : controller.list.pageSize, d : 'processDefinitionId'}).$promise.then(function(caseList) {
+			// Update this list
+			controller.list = caseList;
+			// Update parent for stats
+			$scope.$parent.totalCasesOpen = caseList.totalCount;
+		});
+	};
+	
+	// Global refresh signal listener - Used to init data
+	$scope.$on('refresh_list', function(event) {
+		controller.refresh();
+	});
+	
+	// Common methods
+	this.getCountLabel = function()		{	return getCountLabel(controller);	};
+	this.hasPreviousPage = function()	{	return hasPreviousPage(controller);	}
+	this.hasNextPage = function()		{	return hasNextPage(controller);	}
+	this.showPreviousPage = function()	{	showPreviousPage(controller);	}
+	this.showNextPage = function()		{	showNextPage(controller);	}
+	this.getItems = function()			{	return getItems(controller);	};
+}]);
+
+
+// Common list methods definitions
+function getCountLabel(controller) {
+	if (!controller.list.items)
+		return '';
+		
+	var startIndex = controller.list.pageIndex * controller.list.pageSize;
+	var endIndex = startIndex + controller.list.pageSize;
+	if (endIndex > controller.list.totalCount)
+		endIndex = controller.list.totalCount;
+	return 'Showing from '+ (startIndex+1) +' to '+ endIndex +' out of '+ controller.list.totalCount;
+}
+
+function hasPreviousPage(controller) {
+	return controller.list.pageIndex > 0;
+}
+
+function hasNextPage(controller) {
+	var startIndex = controller.list.pageIndex * controller.list.pageSize;
+	var endIndex = startIndex + controller.list.pageSize;
+	if (endIndex > controller.list.totalCount)
+		endIndex = controller.list.totalCount;
+	return endIndex < controller.list.totalCount;
+}
+
+function showPreviousPage(controller) {
+	controller.list.pageIndex --;
+	controller.refresh();
+}
+
+function showNextPage(controller) {
+	controller.list.pageIndex ++;
+	controller.refresh();
+}
+
+function getItems(controller) {
+	return controller.list.items;
+}
+
+/*
+* DASHBOARD PANE DIRECTIVES
 */
 
 // User stats
@@ -186,6 +287,13 @@ appModule.directive("userOpenCases", ['RESOURCE_PATH', function(RESOURCE_PATH) {
 	};
 }]);
 
+// Pagination controls directive
+appModule.directive("paginationContainer", ['RESOURCE_PATH', function(RESOURCE_PATH) {
+	return {
+		restrict: 'E',
+		templateUrl: RESOURCE_PATH +'directives/pagination-container.html'
+	};
+}]);
 
 
 })();
