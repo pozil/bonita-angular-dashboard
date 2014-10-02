@@ -8,6 +8,10 @@
 
 var appModule = angular.module('dashboardModule', ['ui.bootstrap', 'ngBonita']);
 
+appModule.config(function (bonitaConfigProvider) {
+    bonitaConfigProvider.setBonitaUrl('/bonita');
+});
+
 // Constant used to specify resource base path (facilitates integration into a Bonita custom page)
 appModule.constant('RESOURCE_PATH', 'pageResource?page=custompage_angulardashboard&location=');
 
@@ -89,16 +93,16 @@ appModule.controller('DashboardController',
         $scope.openStartModal = function (id, processName, processVersion, operationType, taskName) {
             var dialog = $modal.open({
                 templateUrl: RESOURCE_PATH +'directives/modal/start-process.html',
-                controller:  ['$scope', '$modalInstance', '$sce', 'BonitaAuthentication', function ($scope, $modalInstance, $sce, BonitaAuthentication) {
+                controller:  ['$scope', '$modalInstance', '$sce', 'bonitaConfig', function ($scope, $modalInstance, $sce, bonitaConfig) {
                     $scope.cancel = function () {
                         $modalInstance.dismiss('cancel');
                     };
                     $scope.getUrl = function () {
                         var url = null;
                         if (operationType == "startApp") {
-                            url = $sce.trustAsResourceUrl(BonitaAuthentication.getBonitaUrl() + '/portal/homepage?ui=form&locale=en&tenant=1#form=' + processName + '--' + processVersion + '$entry&process=' + id + '&autoInstantiate=false&mode=form');
+                            url = $sce.trustAsResourceUrl(bonitaConfig.getBonitaUrl() + '/portal/homepage?ui=form&locale=en&tenant=1#form=' + processName + '--' + processVersion + '$entry&process=' + id + '&autoInstantiate=false&mode=form');
                         } else {
-                            url = $sce.trustAsResourceUrl(BonitaAuthentication.getBonitaUrl() + '/portal/homepage?ui=form&locale=en&tenant=1#form=' + processName + '--' + processVersion + '--' + taskName +'$entry&task=' + id + '&mode=form&assignTask=true');
+                            url = $sce.trustAsResourceUrl(bonitaConfig.getBonitaUrl() + '/portal/homepage?ui=form&locale=en&tenant=1#form=' + processName + '--' + processVersion + '--' + taskName +'$entry&task=' + id + '&mode=form&assignTask=true');
                         }
                         return url;
                     };
