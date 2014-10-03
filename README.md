@@ -7,7 +7,7 @@ Edited by Philippe Ozil (Bonitasoft)
 This pages uses ngBonita (a non-official Bonita REST API client for AngularJS):
 [ngBonita GitHub project](https://github.com/rodriguelegall/ngBonita)
 
-<img src="http://pozil.github.io/images/screenshot_bonita_angular_dashboard.png"/>
+<img src="http://pozil.github.io/images/2014-09-30-integrating-angularjs-with-bonita-bpm/screenshot_bonita_angular_dashboard.png"/>
 
 **Note:** this is just a demo. There will not be any releases or bug fixes.
 
