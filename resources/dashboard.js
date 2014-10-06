@@ -16,26 +16,23 @@ appModule.config(function (bonitaConfigProvider) {
 appModule.constant('RESOURCE_PATH', 'pageResource?page=custompage_angulardashboard&location=');
 
 appModule.controller('DashboardController', 
-	['$scope', '$modal', 'RESOURCE_PATH', 'bonitaConfig', 'BonitaSession', 'User', 'HumanTask', 'ArchivedHumanTask', 'ProcessDefinition', 'ProcessInstance', 'ArchivedProcessInstance', 
-	function ($scope, $modal, RESOURCE_PATH, bonitaConfig, BonitaSession, User, HumanTask, ArchivedHumanTask, ProcessDefinition, ProcessInstance, ArchivedProcessInstance) {
+	['$scope', '$modal', 'RESOURCE_PATH', 'bonitaConfig', 'BonitaSession', 'User', 'ArchivedHumanTask', 'ArchivedProcessInstance', 
+	function ($scope, $modal, RESOURCE_PATH, bonitaConfig, BonitaSession, User, ArchivedHumanTask, ArchivedProcessInstance) {
 	
 		// Prepare scope
         $scope.showRest = [];
-        $scope.loggedUser = null;
         $scope.totalTasksToDo = null;
         $scope.totalArchivedTasksToDo = null;
         $scope.totalAppsAvailable = null;
         $scope.totalCasesOpen = null;
         $scope.totalArchivedCase = null;
-        $scope.firstname = null;
-        $scope.lastname = null;
+        $scope.user = null;
 
 		// Load data using ngBonita resources
         BonitaSession.getCurrent().$promise.then(function(session){
-			// Retrieve session info
+			// Save session info
 			bonitaConfig.setUsername(session.user_name);
 			bonitaConfig.setUserId(session.user_id);
-			$scope.loggedUser = session.user_id;
             
 			// Broadcast refresh signal to all dashboard panes
 			$scope.$broadcast('refresh_list');
@@ -44,22 +41,21 @@ appModule.controller('DashboardController',
 			User.get({
                 id:session.user_id
             }).$promise.then(function(user) {
-                $scope.firstname = user.firstname;
-                $scope.lastname = user.lastname;
+                $scope.user = user;
             });
-			// Load archived tasks
+			// Load archived tasks for stats
             ArchivedHumanTask.getCompletedByCurrentUser({
                 p:0,
-                c:5,
+                c:1,
 				d:'rootContainerId'
             }).$promise.then(function(archivedTasks) {
                     $scope.archivedTasks = archivedTasks.items;
                     $scope.totalArchivedTasks = archivedTasks.totalCount;
             });
-			// Load archived cases
+			// Load archived cases for stats
             ArchivedProcessInstance.getStartedByCurrentUser({
                 p:0,
-                c:5,
+                c:1,
                 d:'processDefinitionId'
             }).$promise.then(function(archivedCases) {
                     $scope.archivedCases = archivedCases.items;
@@ -67,6 +63,13 @@ appModule.controller('DashboardController',
             });
         });
 
+		$scope.getAvatarUrl = function() {
+			if ($scope.user)
+				return 'attachmentImage?src=' + $scope.user.icon;
+			else
+				return 'attachmentImage?src=/default/icon_user.png';
+		};
+		
         $scope.hover = function(element) {
             return $scope.showRest[element] = ! $scope.showRest[element];
         };

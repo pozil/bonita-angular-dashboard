@@ -1,23 +1,29 @@
 <div class="bs-component" ng-mouseenter="hover('indicators')" ng-mouseleave="hover('indicators')">
-	<legend class="text-primary"><span class="glyphicon glyphicon-user"></span> {{firstname}} {{lastname}}</legend>
+	<legend class="text-primary"><span class="glyphicon glyphicon-user"></span> {{user.firstname}} {{user.lastname}}</legend>
 	<div class="panel panel-primary">
 		<div class="panel-body">
 			<div id='source-button' class='btn btn-success btn-xs' ng-show="showRest['indicators']" ng-click="openRestModal('countersModalContent.html')" title="Show REST operations">{ REST }</div>
-			<div class="col-lg-4">
-				<!-- TODO: retrieve user avatar with Bonita REST API -->
-				<img src="pageResource?page=custompage_angulardashboard&location=style/images/usericon.png" alt="Your avatar" style="width: 130px;"/>
+			<div class="col-lg-3">
+				<img src="{{ getAvatarUrl() }}" alt="Your avatar" class="avatar"/>
 			</div>
-			<div class="col-lg-8">
-				<table class="table table-striped table-hover table-condensed">
+			<div class="col-lg-9">
+				<table class="table table-striped table-hover table-condensed stats">
 					<thead>
 					<tr>
-						<th>Available Tasks</th>
-						<th>Done Tasks</th>
+						<th colspan="2">Tasks</th>
 						<th></th>
-						<th>Open Cases</th>
-						<th>Archived Cases</th>
+						<th colspan="2">Cases</th>
 						<th></th>
-						<th>Available Apps</th>
+						<th>Apps</th>
+					</tr>
+					<tr>
+						<th>Available</th>
+						<th>Done</th>
+						<th></th>
+						<th>Open</th>
+						<th>Archived</th>
+						<th></th>
+						<th>Available</th>
 					</tr>
 					</thead>
 					<tbody>

@@ -1,10 +1,14 @@
 body>div.container {margin-top:10px;}
 
+h4	{text-align:center;}
+
 .bs-component {
     position: relative;
 }
 
 .bs-component p.portal_link_container	{margin-bottom:0;}
+
+img.avatar	{width:100px;}
 
 #source-button {
     position: absolute;
@@ -23,3 +27,5 @@ pagination-container span:first-child	{float:left;}
 pagination-container span:last-child	{float:right;}
 pagination-container span.glyphicon		{height:18px;}
 pagination-container button	{font-weight:bold;}
+
+table.stats td, table.stats th	{text-align:center;}
