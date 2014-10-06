@@ -44,22 +44,12 @@ appModule.controller('DashboardController',
                 $scope.user = user;
             });
 			// Load archived tasks for stats
-            ArchivedHumanTask.getCompletedByCurrentUser({
-                p:0,
-                c:1,
-				d:'rootContainerId'
-            }).$promise.then(function(archivedTasks) {
-                    $scope.archivedTasks = archivedTasks.items;
-                    $scope.totalArchivedTasks = archivedTasks.totalCount;
+            ArchivedHumanTask.getCompletedByCurrentUser({p:0, c:1}).$promise.then(function(archivedTasks) {
+				$scope.totalArchivedTasks = archivedTasks.totalCount;
             });
 			// Load archived cases for stats
-            ArchivedProcessInstance.getStartedByCurrentUser({
-                p:0,
-                c:1,
-                d:'processDefinitionId'
-            }).$promise.then(function(archivedCases) {
-                    $scope.archivedCases = archivedCases.items;
-                    $scope.totalArchivedCases = archivedCases.totalCount;
+            ArchivedProcessInstance.getStartedByCurrentUser({p:0, c:1}).$promise.then(function(archivedCases) {
+				$scope.totalArchivedCases = archivedCases.totalCount;
             });
         });
 
