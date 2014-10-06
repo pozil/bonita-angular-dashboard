@@ -9,7 +9,6 @@ This pages uses ngBonita (a non-official Bonita REST API client for AngularJS):
 
 <img src="http://pozil.github.io/images/2014-09-30-integrating-angularjs-with-bonita-bpm/screenshot_bonita_angular_dashboard.png"/>
 
-**Note:** this is just a demo. There will not be any releases or bug fixes.
 
 ## How to build the project and deploy it in Bonita
 **Note:** this requires the 'Custom pages' feature available in Bonita BPM (version greater that 6.3) Efficiency or Performance editions.
