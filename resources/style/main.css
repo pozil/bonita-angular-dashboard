@@ -2,13 +2,9 @@ body>div.container {margin-top:10px;}
 
 h4	{text-align:center;}
 
-.bs-component {
-    position: relative;
-}
+.bs-component {position: relative;}
 
 .bs-component p.portal_link_container	{margin-bottom:0;}
-
-img.avatar	{width:100px;}
 
 #source-button {
     position: absolute;
@@ -22,10 +18,67 @@ img.avatar	{width:100px;}
 	float: right;
 }
 
+/* Pagination container */
 pagination-container>div	{margin:10px 0; clear:both; height:23px;}
 pagination-container span:first-child	{float:left;}
 pagination-container span:last-child	{float:right;}
 pagination-container span.glyphicon		{height:18px;}
 pagination-container button	{font-weight:bold;}
 
-table.stats td, table.stats th	{text-align:center;}
+
+/* Sortable listing */
+.sortable .filter	{margin-bottom:5px;}
+.sortable .filter span.glyphicon	{top:0;}	/* Fix for filter icon */
+
+.sortable table	{width:100%; border-collapse:collapse; }
+.sortable th, .sortable  td	{padding:3px;}
+
+.sortable th.unsorted:after	{
+	content: "\e150";
+	float: right;
+	font-family: 'Glyphicons Halflings';
+	font-style: normal;
+	font-weight: normal;
+	-webkit-font-smoothing: antialiased;
+	padding-right: 5px;
+}
+.sortable th.sort_desc:after	{
+	content: "\e156";
+	float: right;
+	font-family: 'Glyphicons Halflings';
+	font-style: normal;
+	font-weight: normal;
+	-webkit-font-smoothing: antialiased;
+	padding-right: 5px;
+}
+.sortable th.sort_asc:after	{
+	content: "\e155";
+	float: right;
+	font-family: 'Glyphicons Halflings';
+	font-style: normal;
+	font-weight: normal;
+	-webkit-font-smoothing: antialiased;
+	padding-right: 5px;
+}
+
+.sortable th				{cursor:pointer; background-color:#FFFFFF;}
+.sortable th.unsortable	{cursor:default;}
+.sortable th.unsorted	{background-color:#FFFFFF;}
+.sortable th.sort_asc	{background-color:#EDEDED;}
+.sortable th.sort_desc	{background-color:#EDEDED;}
+
+.sortable tr:nth-child(odd)	{background-color:#ecf0f1;}
+.sortable tr:nth-child(even)	{background-color:#FFFFFF;}
+
+.sortable tr:nth-child(odd) td.sorted	{background-color:#DFDFDF;}
+.sortable tr:nth-child(even) td.sorted	{background-color:#EDEDED;}
+
+.sortable td	{font-size:14px;}
+
+/* Special listing properties */
+.bs-apps-pane .sortable td:last-child		{text-align:center;}	/* App start button */
+.bs-tasks-pane .sortable td:last-child	{text-align:center;}	/* Task open button */
+.bs-stats-pane table td, .bs-stats-pane table th	{text-align:center;}
+
+
+img.avatar	{width:100px;}
