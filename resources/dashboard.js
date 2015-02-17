@@ -61,12 +61,12 @@ appModule.controller('DashboardController',
             });
         });
 
-		$scope.getAvatarUrl = function() {
-			if ($scope.user)
-				return 'attachmentImage?src=' + $scope.user.icon;
-			else
-				return 'attachmentImage?src=/default/icon_user.png';
-		};
+	$scope.getAvatarUrl = function() {
+		if ($scope.user)
+			return bonitaConfig.getBonitaUrl() +'/portal/attachmentImage?src=' + $scope.user.icon;
+		else
+			return bonitaConfig.getBonitaUrl()+ '/portal/attachmentImage?src=/default/icon_user.png';
+	};
 		
         $scope.hover = function(element) {
             return $scope.showRest[element] = ! $scope.showRest[element];
