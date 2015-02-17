@@ -10,7 +10,7 @@
 var appModule = angular.module('dashboardModule', ['ui.bootstrap', 'ngBonita']);
 
 appModule.config(function (bonitaConfigProvider) {
-    bonitaConfigProvider.setBonitaUrl('/bonita');
+	bonitaConfigProvider.setBonitaUrl('/bonita');
 });
 
 // Constant object storing application static configuration (see documentation)
@@ -26,96 +26,89 @@ appModule.constant('APP_CONFIG', {
 });
 
 appModule.controller('DashboardController', 
-	['$scope', '$modal', 'APP_CONFIG', 'bonitaConfig', 'BonitaSession', 'User', 'ArchivedHumanTask', 'ArchivedProcessInstance', 
-	function ($scope, $modal, APP_CONFIG, bonitaConfig, BonitaSession, User, ArchivedHumanTask, ArchivedProcessInstance) {
+	['$scope', '$modal', 'APP_CONFIG', 'bonitaConfig', 'bonitaAuthentication', 'User', 'ArchivedHumanTask', 'ArchivedProcessInstance', 
+	function ($scope, $modal, APP_CONFIG, bonitaConfig, bonitaAuthentication, User, ArchivedHumanTask, ArchivedProcessInstance) {
 	
 		// Prepare scope
-        $scope.showRest = [];
-        $scope.totalTasksToDo = null;
-        $scope.totalArchivedTasksToDo = null;
-        $scope.totalAppsAvailable = null;
-        $scope.totalCasesOpen = null;
-        $scope.totalArchivedCase = null;
-        $scope.user = null;
+		$scope.showRest = [];
+		$scope.totalTasksToDo = null;
+		$scope.totalArchivedTasksToDo = null;
+		$scope.totalAppsAvailable = null;
+		$scope.totalCasesOpen = null;
+		$scope.totalArchivedCase = null;
+		$scope.user = null;
 
-		// Load data using ngBonita resources
-        BonitaSession.getCurrent().$promise.then(function(session){
-			// Save session info
-			bonitaConfig.setUsername(session.user_name);
-			bonitaConfig.setUserId(session.user_id);
-            
-			// Broadcast refresh signal to all dashboard panes
-			$scope.$broadcast('refresh_list');
-			
+		// Ensure we have a valid Bonita session & load resources
+		bonitaAuthentication.checkForActiveSession().then(function(session){
 			// Load user data
 			User.get({id:session.user_id}).$promise.then(function(user) {
-                $scope.user = user;
-            });
+				$scope.user = user;
+			});
 			// Load archived tasks for stats
-            ArchivedHumanTask.getCompletedByCurrentUser({p:0, c:1}).$promise.then(function(archivedTasks) {
+			ArchivedHumanTask.getCompletedByCurrentUser({p:0, c:1}).$promise.then(function(archivedTasks) {
 				$scope.totalArchivedTasks = archivedTasks.totalCount;
-            });
+			});
 			// Load archived cases for stats
-            ArchivedProcessInstance.getStartedByCurrentUser({p:0, c:1}).$promise.then(function(archivedCases) {
+			ArchivedProcessInstance.getStartedByCurrentUser({p:0, c:1}).$promise.then(function(archivedCases) {
 				$scope.totalArchivedCases = archivedCases.totalCount;
-            });
-        });
+			});
+		});
 
-	$scope.getAvatarUrl = function() {
-		if ($scope.user)
-			return bonitaConfig.getBonitaUrl() +'/portal/attachmentImage?src=' + $scope.user.icon;
-		else
-			return bonitaConfig.getBonitaUrl()+ '/portal/attachmentImage?src=/default/icon_user.png';
-	};
+		$scope.getAvatarUrl = function() {
+			if ($scope.user)
+				return bonitaConfig.getBonitaUrl() +'/portal/attachmentImage?src=' + $scope.user.icon;
+			else
+				return bonitaConfig.getBonitaUrl()+ '/portal/attachmentImage?src=/default/icon_user.png';
+		};
 		
-        $scope.hover = function(element) {
-            return $scope.showRest[element] = ! $scope.showRest[element];
-        };
+		$scope.hover = function(element) {
+			return $scope.showRest[element] = ! $scope.showRest[element];
+		};
 
-        $scope.getDate = function(dateString) {
+		$scope.getDate = function(dateString) {
 		   return dateString.substring(0, dateString.lastIndexOf('.'));
-        }
+		}
 
 		// Modal dialog that displays REST documentation
-        $scope.openRestModal = function(url) {
-            var modalInstance = $modal.open({
-                templateUrl: APP_CONFIG.RESOURCE_PATH +'directives/modal/' + url,
-                controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
+		$scope.openRestModal = function(url) {
+			var modalInstance = $modal.open({
+				templateUrl: APP_CONFIG.RESOURCE_PATH +'directives/modal/' + url,
+				controller: ['$scope', '$modalInstance', function ($scope, $modalInstance) {
 
-                    $scope.ok = function () {
-                        $modalInstance.close();
-                    };
+					$scope.ok = function () {
+						$modalInstance.close();
+					};
 
-                }]
-            });
-        };
+				}]
+			});
+		};
 
 		// Modal dialog that displays an iframe
-        $scope.openStartModal = function (id, processName, processVersion, operationType, taskName) {
-            var dialog = $modal.open({
-                templateUrl: APP_CONFIG.RESOURCE_PATH +'directives/modal/start-process.html',
-                controller:  ['$scope', '$modalInstance', '$sce', 'bonitaConfig', function ($scope, $modalInstance, $sce, bonitaConfig) {
-                    $scope.cancel = function () {
-                        $modalInstance.dismiss('cancel');
-                    };
-                    $scope.getUrl = function () {
-                        var url = null;
-                        if (operationType == "startApp") {
-                            url = $sce.trustAsResourceUrl(bonitaConfig.getBonitaUrl() + '/portal/homepage?ui=form&locale=en&tenant=1#form=' + processName + '--' + processVersion + '$entry&process=' + id + '&autoInstantiate=false&mode=form');
-                        } else {
-                            url = $sce.trustAsResourceUrl(bonitaConfig.getBonitaUrl() + '/portal/homepage?ui=form&locale=en&tenant=1#form=' + processName + '--' + processVersion + '--' + taskName +'$entry&task=' + id + '&mode=form&assignTask=true');
-                        }
-                        return url;
-                    };
-                }],
-                size: 'lg'
-            });
-            dialog.result.finally(function() {
-                $scope.quickdetails.teamtasksPagination.refresh = !$scope.quickdetails.teamtasksPagination.refresh;
-            });
-        };
+		$scope.openStartModal = function (id, processName, processVersion, operationType, taskName) {
+			var dialog = $modal.open({
+				templateUrl: APP_CONFIG.RESOURCE_PATH +'directives/modal/start-process.html',
+				controller:  ['$scope', '$modalInstance', '$sce', 'bonitaConfig', function ($scope, $modalInstance, $sce, bonitaConfig) {
+					$scope.cancel = function () {
+						$modalInstance.dismiss('cancel');
+					};
+					$scope.getUrl = function () {
+						var url = null;
+						if (operationType == "startApp") {
+							url = $sce.trustAsResourceUrl(bonitaConfig.getBonitaUrl() + '/portal/homepage?ui=form&locale=en&tenant=1#form=' + processName + '--' + processVersion + '$entry&process=' + id + '&autoInstantiate=false&mode=form');
+						} else {
+							url = $sce.trustAsResourceUrl(bonitaConfig.getBonitaUrl() + '/portal/homepage?ui=form&locale=en&tenant=1#form=' + processName + '--' + processVersion + '--' + taskName +'$entry&task=' + id + '&mode=form&assignTask=true');
+						}
+						return url;
+					};
+				}],
+				size: 'lg'
+			});
+			dialog.result.finally(function() {
+				$scope.quickdetails.teamtasksPagination.refresh = !$scope.quickdetails.teamtasksPagination.refresh;
+			});
+		};
 
-    }]);
+	}]);
 
 /*
 * PAGINATED LIST CONTROLLERS
@@ -123,8 +116,8 @@ appModule.controller('DashboardController',
 
 // User available tasks list controller
 appModule.controller('TaskListController', 
-	['APP_CONFIG', '$scope', '$filter', '$modal', 'HumanTask', 
-	function (APP_CONFIG, $scope, $filter, $modal, HumanTask) {
+	['APP_CONFIG', '$scope', '$filter', '$modal', 'bonitaAuthentication', 'HumanTask', 
+	function (APP_CONFIG, $scope, $filter, $modal, bonitaAuthentication, HumanTask) {
 	
 	var orderByFilterFunction = null;
 	var textFilterFunction = null;
@@ -183,10 +176,14 @@ appModule.controller('TaskListController',
 		});
 	};
 		
-	// Global refresh signal listener - Used to init data
-	$scope.$on('refresh_list', function(event) {
-		controller.updateView(true);
-	});
+	// Init data when we acquire user session
+	$scope.$watch(
+		function () { return bonitaAuthentication.isLogged; },
+		function (newValue, oldValue) {
+			if (newValue === true)
+				controller.updateView(true);
+		}
+	);
 	
 	// Client side common pagination methods
 	this.getHeader = function(name)				{	return getHeader(controller, name);	};
@@ -205,8 +202,8 @@ appModule.controller('TaskListController',
 
 // User app list controller
 appModule.controller('AppListController', 
-	['APP_CONFIG', '$scope', '$filter', '$modal', 'ProcessDefinition', 
-	function (APP_CONFIG, $scope, $filter, $modal, ProcessDefinition) {
+	['APP_CONFIG', '$scope', '$filter', '$modal', 'bonitaAuthentication', 'ProcessDefinition', 
+	function (APP_CONFIG, $scope, $filter, $modal, bonitaAuthentication, ProcessDefinition) {
 	
 	var orderByFilterFunction = null;
 	var textFilterFunction = null;
@@ -265,10 +262,14 @@ appModule.controller('AppListController',
 		});
 	};
 	
-	// Global refresh signal listener - Used to init data
-	$scope.$on('refresh_list', function(event) {
-		controller.updateView(true);
-	});
+	// Init data when we acquire user session
+	$scope.$watch(
+		function () { return bonitaAuthentication.isLogged; },
+		function (newValue, oldValue) {
+			if (newValue === true)
+				controller.updateView(true);
+		}
+	);
 	
 	// Client side common pagination methods
 	this.getHeader = function(name)				{	return getHeader(controller, name);	};
@@ -287,8 +288,8 @@ appModule.controller('AppListController',
 
 // User case list controller
 appModule.controller('CaseListController', 
-	['APP_CONFIG', '$scope', '$filter', '$modal', 'ProcessInstance', 
-	function (APP_CONFIG, $scope, $filter, $modal, ProcessInstance) {
+	['APP_CONFIG', '$scope', '$filter', '$modal', 'bonitaAuthentication', 'ProcessInstance', 
+	function (APP_CONFIG, $scope, $filter, $modal, bonitaAuthentication, ProcessInstance) {
 	
 	var orderByFilterFunction = null;
 	var textFilterFunction = null;
@@ -351,10 +352,14 @@ appModule.controller('CaseListController',
 		});
 	};
 	
-	// Global refresh signal listener - Used to init data
-	$scope.$on('refresh_list', function(event) {
-		controller.updateView(true);
-	});
+	// Init data when we acquire user session
+	$scope.$watch(
+		function () { return bonitaAuthentication.isLogged; },
+		function (newValue, oldValue) {
+			if (newValue === true)
+				controller.updateView(true);
+		}
+	);
 	
 	// Client side common pagination methods
 	this.getHeader = function(name)				{	return getHeader(controller, name);	};

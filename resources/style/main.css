@@ -78,6 +78,8 @@ pagination-container button	{font-weight:bold;}
 /* Special listing properties */
 .bs-apps-pane .sortable td:last-child		{text-align:center;}	/* App start button */
 .bs-tasks-pane .sortable td:last-child	{text-align:center;}	/* Task open button */
+.bs-stats-pane table thead tr:first-child th	{border-bottom-width:0;}
+.bs-stats-pane table thead tr:last-child th	{border-top-width:0;}
 .bs-stats-pane table td, .bs-stats-pane table th	{text-align:center;}
 
 
